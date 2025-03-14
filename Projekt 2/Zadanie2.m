@@ -1,11 +1,11 @@
 format long;
 
 % Definicja funkcji f(x)
-f = @(x) 2 * (exp(-(x / 8 - 1) ^ 6)) ^ 12 + 0.001 * x ^ 3 - 2.5;
+f = @(x) 4 * (exp(-(x / 8 - 1) ^ 6)) ^ 12 + 0.001 * x ^ 3 - 2.5;
 
 % Zakres przedzialu i dokladnosc
 range_limits = [1, 10];
-delta = 1e-14;
+delta = 1e-10;
 
 % Obliczenie przyblizen w poszczegolnych iteracjach
 approximations = Bisection(f, range_limits, delta);

@@ -1,37 +1,22 @@
-%Inicjalizacja zmiennych x, y
-x = -10:0.1:10;
-y = 1;
-eps_value = eps('single')/2;
+% Zdefiniowanie parametrów
+sigmam = 5.8e7; % Przewodność miedzi w S/m
+sigmas = 1.1e6; % Przewodność stali nierdzewnej w S/m
+mi = 4 * pi * 1e-7; % Przenikalność magnetyczna w H/m
 
-%Funkcja φ dla x podwojnej precyzji
-function out = phi_double(x, y)
-    out = sign(y) .* acos(x ./ (sqrt(x .^ 2 + y .^ 2)));
-end
+% Zakres częstotliwości
+f = logspace(0, 10, 500); % Od 1 Hz do 10 GHz
 
-%Funkcja φ dla x pojedynczej precyzji
-function out = phi_single(x, y)
-    xs = single(x);
-    xd = double(xs);
-    out = sign(y) .* acos(xd ./ (sqrt(xd .^ 2 + y .^ 2)));
-end
+% Obliczenie głębokości wnikania
+deltam = 1 ./ sqrt(pi * f * mi * sigmam);
+deltas = 1 ./ sqrt(pi * f * mi * sigmas);
 
-%Funkcja obliczajaca blad wzgledny δ[φ(˜x, y, z)]
-function out = relative_err(phi_double, phi_single)
-    out = (phi_single - phi_double) ./ phi_double;
-end
-
-%Funkcja obliczajaca wspolczynnik przenoszenia bledu wzglednego
-function out = T(x, y)
-    out = -x.*y^2./(abs(y).*acos(x./(sqrt(x.^2+y.^2))).*(x.^2+y.^2));
-end
-
-%Porownanie wartosci bledow, wyznaczone w ramach Zadania 2, z oszacowaniem
-error_abs = abs(relative_err(phi_double(x, y), phi_single(x, y)));
-plot(x, error_abs, 'b')
-xlabel('x')
-ylabel('|δ[φ]|')
-title('Porownanie wartosci bledu z oszacowaniem')
-grid on
+% Wykres
+figure
+loglog(f, deltam, 'r', 'LineWidth', 2)
 hold on
-plot(x, abs(T(x,y))*eps_value, 'r')
-legend('Wartosc bledu', 'Oszacowanie')
+loglog(f, deltas, 'b', 'LineWidth', 2)
+xlabel('Częstotliwość (Hz)')
+ylabel('Głębokość wnikania (\delta) [m]')
+title('Głębokość wnikania')
+grid on
+legend('Miedź (\sigma = 5.8 \times 10^7 S/m)', 'Stal nierdzewna (\sigma = 1.1 \times 10^6 S/m)')
